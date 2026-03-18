@@ -149,6 +149,26 @@ This project uses two MCP servers configured in `.claude/settings.json`:
 - Never commit `.env` or `.env.local`
 - PR: one per task, squash merge
 
+### Commit message footer (always use this format)
+Every commit must end with:
+```
+Built with Claude Code — https://claude.ai/claude-code
+```
+
+Full example:
+```
+feat(task-03): Jira service layer with all 10 methods
+
+Implement jira.service.ts with full transformer layer ...
+
+Built with Claude Code — https://claude.ai/claude-code
+```
+
+**Rules:**
+- Author is always **Manoj Kumar** (`git config user.name "Manoj Kumar"`)
+- No `Co-Authored-By` lines — Claude Code is a tool, not a co-author
+- The footer line attributes the AI tooling used, not a person
+
 ## Environment Variables
 
 All env vars must be prefixed with `VITE_` to be exposed to the browser.
