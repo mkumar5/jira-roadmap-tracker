@@ -29,7 +29,7 @@
 | 02 | [Salt DS + AG Grid Setup](./02-saltds-agrid-setup.md) | DONE | ui-developer | ThemeProvider + context, CSS imports ordered in main.tsx, AG Grid quartz + Salt tokens, lint/type/test/build ✅ |
 | 03 | [Jira MCP + Service Layer](./03-jira-service.md) | DONE | jira-integrator | All 10 methods implemented. POST /search/jql (GET deprecated). See notes below. |
 | 04 | [Data Models & Types](./04-data-models.md) | DONE | architect | Domain model types defined: Initiative→Story hierarchy, sprint reports, slippage severity, HierarchyNode for AG Grid tree data |
-| 05 | [App Shell & Navigation](./05-app-shell.md) | PENDING | ui-developer | Layout, sidebar, routing |
+| 05 | [App Shell & Navigation](./05-app-shell.md) | DONE | ui-developer | App shell, routing, sidebar navigation, settings page with Jira config + Test Connection |
 | 06 | [Roadmap Hierarchy Grid](./06-roadmap-grid.md) | PENDING | ui-developer | Initiative→Epic→Story tree grid |
 | 07 | [Sprint Tracking View](./07-sprint-tracking.md) | PENDING | ui-developer | Per-team sprint board + grid |
 | 08 | [Slippage Detection Engine](./08-slippage-engine.md) | PENDING | jira-integrator | Algorithm + slippage dashboard |
@@ -58,3 +58,4 @@
 | 02 | Salt DS + AG Grid Setup | 2026-03-18 | AppThemeProvider with context (ThemeContext.ts split for react-refresh), AG Grid quartz wired to Salt tokens, CSS import order fixed in main.tsx |
 | 03 | Jira MCP + Service Layer | 2026-03-18 | **MCP validation findings:** Instance mkumar-personal.atlassian.net is standard Jira (not Premium) — only Epic/Story/Task/Subtask present, no Initiative/Feature. GET /search deprecated → switched paginateJiraSearch to POST /search/jql. Sprint field customfield_10020 ✅. Story points customfield_10016 present but null (not in use). VITE_HIERARCHY_STRATEGY should be LABEL_BASED for this instance. |
 | 04 | Data Models & Types | 2026-03-18 | jira.types.ts (raw API shapes), roadmap.types.ts (domain model with Initiative→Story, SlippageSeverity, HierarchyNode), sprint.types.ts (SprintReport, ExecutiveSummary, TeamSummary). Type-check passes clean. |
+| 05 | App Shell & Navigation | 2026-03-18 | App.tsx lazy-routes, AppShell grid layout, sidebar NavLink with active state, AppHeader with theme toggle + "Last synced: Never", SettingsPage with Salt DS FormField/Input/Dropdown, Test Connection button, Banner success/error. type-check ✅ lint ✅ 15 tests ✅ build ✅ |

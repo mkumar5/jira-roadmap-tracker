@@ -13,12 +13,16 @@ export const AppHeader = () => {
       </Text>
 
       {projectKeys.length > 0 && (
-        <Text styleAs="label" color="secondary">
+        <Text styleAs="label" color="secondary" style={{ whiteSpace: 'nowrap' }}>
           {projectKeys.join(', ')}
         </Text>
       )}
 
       <div style={{ flex: 1 }} />
+
+      <Text styleAs="label" color="secondary" style={{ whiteSpace: 'nowrap' }}>
+        Last synced: Never
+      </Text>
 
       <Tooltip content={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}>
         <Button
