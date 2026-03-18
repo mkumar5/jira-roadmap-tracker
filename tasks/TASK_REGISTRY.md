@@ -26,8 +26,8 @@
 | # | Task | Status | Agent | Notes |
 |---|------|--------|-------|-------|
 | 01 | [Foundation Setup](./01-foundation-setup.md) | DONE | architect | Vite + React + TS strict, all tooling, ESLint 9 flat config, 15/15 tests pass, build produces dist/ |
-| 02 | [Salt DS + AG Grid Setup](./02-saltds-agrid-setup.md) | IN_PROGRESS | ui-developer | Install + configure design system |
-| 03 | [Jira MCP + Service Layer](./03-jira-service.md) | PENDING | jira-integrator | Jira REST client + MCP validation |
+| 02 | [Salt DS + AG Grid Setup](./02-saltds-agrid-setup.md) | DONE | ui-developer | ThemeProvider + context, CSS imports ordered in main.tsx, AG Grid quartz + Salt tokens, lint/type/test/build ✅ |
+| 03 | [Jira MCP + Service Layer](./03-jira-service.md) | IN_PROGRESS | jira-integrator | Jira REST client + MCP validation |
 | 04 | [Data Models & Types](./04-data-models.md) | PENDING | architect | All TypeScript interfaces |
 | 05 | [App Shell & Navigation](./05-app-shell.md) | PENDING | ui-developer | Layout, sidebar, routing |
 | 06 | [Roadmap Hierarchy Grid](./06-roadmap-grid.md) | PENDING | ui-developer | Initiative→Epic→Story tree grid |
@@ -55,3 +55,4 @@
 | # | Task | Completed | Summary |
 |---|------|-----------|---------|
 | 01 | Foundation Setup | 2026-03-18 | Migrated to ESLint 9 flat config, fixed a11y lint error, all AC green: type-check ✅ lint ✅ 15 tests ✅ build ✅ |
+| 02 | Salt DS + AG Grid Setup | 2026-03-18 | AppThemeProvider with context (ThemeContext.ts split for react-refresh), AG Grid quartz wired to Salt tokens, CSS import order fixed in main.tsx |

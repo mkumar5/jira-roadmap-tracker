@@ -4,10 +4,8 @@
    Do NOT hardcode colors — use CSS variables.
    ========================================= */
 
-/* Salt DS theme tokens */
-@import '@salt-ds/theme/index.css';
-
 /* App layout — 2-column sidebar + main */
+/* Note: Salt DS, AG Grid CSS imported in main.tsx (import order matters) */
 :root {
   font-family: var(--salt-typography-fontFamily);
   color-scheme: light dark;
@@ -66,12 +64,12 @@ body {
    AG Grid — Salt DS Integration
    ========================================= */
 .ag-theme-quartz {
-  --ag-background-color: var(--salt-color-background);
-  --ag-header-background-color: var(--salt-color-background-secondary);
-  --ag-odd-row-background-color: var(--salt-color-background-secondary);
+  --ag-background-color: var(--salt-color-white);
+  --ag-header-background-color: var(--salt-color-gray-30);
+  --ag-odd-row-background-color: var(--salt-color-gray-10);
   --ag-border-color: var(--salt-separable-primary-borderColor);
-  --ag-row-hover-color: color-mix(in srgb, var(--salt-color-blue-600) 8%, transparent);
-  --ag-selected-row-background-color: color-mix(in srgb, var(--salt-color-blue-600) 15%, transparent);
+  --ag-row-hover-color: var(--salt-color-blue-10);
+  --ag-selected-row-background-color: var(--salt-color-blue-20);
   --ag-font-family: var(--salt-typography-fontFamily);
   --ag-font-size: 13px;
   --ag-header-foreground-color: var(--salt-color-foreground);

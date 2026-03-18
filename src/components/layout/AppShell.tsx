@@ -2,15 +2,10 @@ import { Outlet } from 'react-router-dom';
 import { AppHeader } from './AppHeader';
 import { AppSidebar } from './AppSidebar';
 
-interface AppShellProps {
-  mode: 'light' | 'dark';
-  onModeChange: (mode: 'light' | 'dark') => void;
-}
-
-export const AppShell = ({ mode, onModeChange }: AppShellProps) => (
+export const AppShell = () => (
   <div className="app-layout">
     <div className="app-header">
-      <AppHeader mode={mode} onModeChange={onModeChange} />
+      <AppHeader />
     </div>
     <nav className="app-sidebar" aria-label="Main navigation">
       <AppSidebar />
