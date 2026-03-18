@@ -1,16 +1,23 @@
 /**
- * Jira issue type names — VERIFY these against your Jira instance.
- * Use MCP: search_issues(jql: "ORDER BY created LIMIT 1") and inspect issuetype fields.
- * Different orgs use different names for Initiative/Deliverable.
+ * Jira issue type names — verified against connected Jira instance (2026-03-18).
+ *
+ * INSTANCE: mkumar-personal.atlassian.net / Project: SCRUM (DataEng)
+ * PLAN: Standard Jira (not Premium) — hierarchy is Epic → Story/Task → Subtask
+ *
+ * For production enterprise Jira with Jira Premium/Advanced Roadmaps,
+ * Initiative and Feature types would be present. Update these when migrating.
+ * Set VITE_HIERARCHY_STRATEGY accordingly:
+ *   - Current instance: use 'LABEL_BASED' or 'COMPONENT_BASED'
+ *   - Enterprise with Premium: use 'JIRA_PREMIUM'
  */
 export const ISSUE_TYPES = {
-  INITIATIVE: 'Initiative', // May be 'Theme' or 'Goal' in some orgs
-  DELIVERABLE: 'Feature', // May be 'Deliverable' or 'Capability'
-  EPIC: 'Epic', // Standard — rarely changes
-  STORY: 'Story', // Standard
-  TASK: 'Task',
+  INITIATIVE: 'Initiative', // NOT present in current instance — would need Premium
+  DELIVERABLE: 'Feature',   // NOT present in current instance — would need Premium
+  EPIC: 'Epic',             // ✅ confirmed present (hierarchyLevel=1)
+  STORY: 'Story',           // ✅ confirmed present (hierarchyLevel=0)
+  TASK: 'Task',             // ✅ confirmed present (hierarchyLevel=0)
   BUG: 'Bug',
-  SUBTASK: 'Sub-task',
+  SUBTASK: 'Subtask',       // ✅ confirmed (hierarchyLevel=-1), note: no hyphen
 } as const;
 
 /**

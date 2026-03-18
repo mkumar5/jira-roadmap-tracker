@@ -71,6 +71,7 @@ export const jiraAgileClient: AxiosInstance = axios.create({
 
 /**
  * Paginate through all Jira search results.
+ * Uses POST /search/jql (the GET /search endpoint is deprecated in Jira Cloud as of 2025).
  * Jira Cloud caps at 100 per page — this fetches all pages automatically.
  */
 export async function paginateJiraSearch<T>(
@@ -83,13 +84,11 @@ export async function paginateJiraSearch<T>(
   let total = Infinity;
 
   while (startAt < total) {
-    const { data } = await jiraClient.get<JiraSearchResponse>('/search', {
-      params: {
-        jql,
-        fields: fields.join(','),
-        startAt,
-        maxResults: PAGINATION.MAX_RESULTS,
-      },
+    const { data } = await jiraClient.post<JiraSearchResponse>('/search/jql', {
+      jql,
+      fields: [...fields],
+      startAt,
+      maxResults: PAGINATION.MAX_RESULTS,
     });
     total = data.total;
     const transformed = data.issues.map(transform);

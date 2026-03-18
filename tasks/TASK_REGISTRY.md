@@ -27,8 +27,8 @@
 |---|------|--------|-------|-------|
 | 01 | [Foundation Setup](./01-foundation-setup.md) | DONE | architect | Vite + React + TS strict, all tooling, ESLint 9 flat config, 15/15 tests pass, build produces dist/ |
 | 02 | [Salt DS + AG Grid Setup](./02-saltds-agrid-setup.md) | DONE | ui-developer | ThemeProvider + context, CSS imports ordered in main.tsx, AG Grid quartz + Salt tokens, lint/type/test/build ✅ |
-| 03 | [Jira MCP + Service Layer](./03-jira-service.md) | IN_PROGRESS | jira-integrator | Jira REST client + MCP validation |
-| 04 | [Data Models & Types](./04-data-models.md) | PENDING | architect | All TypeScript interfaces |
+| 03 | [Jira MCP + Service Layer](./03-jira-service.md) | DONE | jira-integrator | All 10 methods implemented. POST /search/jql (GET deprecated). See notes below. |
+| 04 | [Data Models & Types](./04-data-models.md) | IN_PROGRESS | architect | All TypeScript interfaces |
 | 05 | [App Shell & Navigation](./05-app-shell.md) | PENDING | ui-developer | Layout, sidebar, routing |
 | 06 | [Roadmap Hierarchy Grid](./06-roadmap-grid.md) | PENDING | ui-developer | Initiative→Epic→Story tree grid |
 | 07 | [Sprint Tracking View](./07-sprint-tracking.md) | PENDING | ui-developer | Per-team sprint board + grid |
@@ -56,3 +56,4 @@
 |---|------|-----------|---------|
 | 01 | Foundation Setup | 2026-03-18 | Migrated to ESLint 9 flat config, fixed a11y lint error, all AC green: type-check ✅ lint ✅ 15 tests ✅ build ✅ |
 | 02 | Salt DS + AG Grid Setup | 2026-03-18 | AppThemeProvider with context (ThemeContext.ts split for react-refresh), AG Grid quartz wired to Salt tokens, CSS import order fixed in main.tsx |
+| 03 | Jira MCP + Service Layer | 2026-03-18 | **MCP validation findings:** Instance mkumar-personal.atlassian.net is standard Jira (not Premium) — only Epic/Story/Task/Subtask present, no Initiative/Feature. GET /search deprecated → switched paginateJiraSearch to POST /search/jql. Sprint field customfield_10020 ✅. Story points customfield_10016 present but null (not in use). VITE_HIERARCHY_STRATEGY should be LABEL_BASED for this instance. |
