@@ -154,6 +154,9 @@ body {
 .ag-theme-quartz .row-carried {
   background-color: color-mix(in srgb, var(--salt-status-error-background) 30%, transparent) !important;
 }
+.ag-theme-quartz .row-critical {
+  background-color: color-mix(in srgb, var(--salt-status-error-background) 15%, transparent) !important;
+}
 
 /* =========================================
    Loading / Empty States

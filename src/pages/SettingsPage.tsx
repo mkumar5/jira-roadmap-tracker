@@ -14,8 +14,9 @@ import {
   Card,
 } from '@salt-ds/core';
 import { useConfigStore } from '@/store/configStore';
+import { useSlippageStore } from '@/store/slippageStore';
 import { jiraService } from '@/services/jira.service';
-import type { HierarchyStrategy } from '@/types';
+import type { HierarchyStrategy, SlippageSeverity } from '@/types';
 
 const HIERARCHY_OPTIONS: { value: HierarchyStrategy; label: string }[] = [
   { value: 'LABEL_BASED', label: 'Label Based (standard Jira)' },
@@ -28,6 +29,7 @@ type ConnectionStatus = 'idle' | 'testing' | 'success' | 'error';
 
 export const SettingsPage = () => {
   const store = useConfigStore();
+  const { atRiskDays, alertThreshold, setAtRiskDays, setAlertThreshold } = useSlippageStore();
 
   const [host, setHost] = useState(store.jiraHost);
   const [email, setEmail] = useState(store.jiraEmail);
@@ -174,6 +176,45 @@ export const SettingsPage = () => {
               </Dropdown>
               <FormFieldHelperText>
                 How Initiatives and Deliverables are represented in your Jira instance.
+              </FormFieldHelperText>
+            </FormField>
+          </StackLayout>
+        </Card>
+
+        {/* Alerting */}
+        <Card>
+          <StackLayout gap={2}>
+            <Text styleAs="h2">Slippage Alerting</Text>
+
+            <FormField>
+              <FormFieldLabel>At-Risk Lookahead (days)</FormFieldLabel>
+              <Dropdown
+                selected={[String(atRiskDays)]}
+                onSelectionChange={(_e, selected) => setAtRiskDays(Number(selected[0]))}
+              >
+                {['7', '14', '30'].map((d) => (
+                  <Option key={d} value={d}>{d} days</Option>
+                ))}
+              </Dropdown>
+              <FormFieldHelperText>
+                Items due within this window appear in the At Risk tab.
+              </FormFieldHelperText>
+            </FormField>
+
+            <FormField>
+              <FormFieldLabel>Alert Threshold</FormFieldLabel>
+              <Dropdown
+                selected={[alertThreshold]}
+                onSelectionChange={(_e, selected) =>
+                  setAlertThreshold(selected[0] as SlippageSeverity)
+                }
+              >
+                {(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'] as SlippageSeverity[]).map((s) => (
+                  <Option key={s} value={s}>{s}</Option>
+                ))}
+              </Dropdown>
+              <FormFieldHelperText>
+                Minimum severity level shown in the sidebar badge count.
               </FormFieldHelperText>
             </FormField>
           </StackLayout>
