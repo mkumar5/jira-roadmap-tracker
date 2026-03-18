@@ -17,7 +17,7 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export const AppSidebar = () => (
-  <ul role="list" style={{ listStyle: 'none' }}>
+  <ul style={{ listStyle: 'none' }}>
     {NAV_ITEMS.map((item) => (
       <li key={item.path}>
         <NavLink

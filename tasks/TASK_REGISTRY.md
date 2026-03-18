@@ -25,8 +25,8 @@
 
 | # | Task | Status | Agent | Notes |
 |---|------|--------|-------|-------|
-| 01 | [Foundation Setup](./01-foundation-setup.md) | PENDING | architect | Init Vite + React + TS project |
-| 02 | [Salt DS + AG Grid Setup](./02-saltds-agrid-setup.md) | PENDING | ui-developer | Install + configure design system |
+| 01 | [Foundation Setup](./01-foundation-setup.md) | DONE | architect | Vite + React + TS strict, all tooling, ESLint 9 flat config, 15/15 tests pass, build produces dist/ |
+| 02 | [Salt DS + AG Grid Setup](./02-saltds-agrid-setup.md) | IN_PROGRESS | ui-developer | Install + configure design system |
 | 03 | [Jira MCP + Service Layer](./03-jira-service.md) | PENDING | jira-integrator | Jira REST client + MCP validation |
 | 04 | [Data Models & Types](./04-data-models.md) | PENDING | architect | All TypeScript interfaces |
 | 05 | [App Shell & Navigation](./05-app-shell.md) | PENDING | ui-developer | Layout, sidebar, routing |
@@ -54,4 +54,4 @@
 
 | # | Task | Completed | Summary |
 |---|------|-----------|---------|
-| — | — | — | — |
+| 01 | Foundation Setup | 2026-03-18 | Migrated to ESLint 9 flat config, fixed a11y lint error, all AC green: type-check ✅ lint ✅ 15 tests ✅ build ✅ |
