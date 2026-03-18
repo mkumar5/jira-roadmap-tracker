@@ -30,7 +30,7 @@
 | 03 | [Jira MCP + Service Layer](./03-jira-service.md) | DONE | jira-integrator | All 10 methods implemented. POST /search/jql (GET deprecated). See notes below. |
 | 04 | [Data Models & Types](./04-data-models.md) | DONE | architect | Domain model types defined: Initiative→Story hierarchy, sprint reports, slippage severity, HierarchyNode for AG Grid tree data |
 | 05 | [App Shell & Navigation](./05-app-shell.md) | DONE | ui-developer | App shell, routing, sidebar navigation, settings page with Jira config + Test Connection |
-| 06 | [Roadmap Hierarchy Grid](./06-roadmap-grid.md) | PENDING | ui-developer | Initiative→Epic→Story tree grid |
+| 06 | [Roadmap Hierarchy Grid](./06-roadmap-grid.md) | DONE | ui-developer | Roadmap hierarchy tree grid with slippage colors, filters, CSV export |
 | 07 | [Sprint Tracking View](./07-sprint-tracking.md) | PENDING | ui-developer | Per-team sprint board + grid |
 | 08 | [Slippage Detection Engine](./08-slippage-engine.md) | PENDING | jira-integrator | Algorithm + slippage dashboard |
 | 09 | [Sprint Report Generator](./09-sprint-reports.md) | PENDING | reporter | End-of-sprint report UI + export |
@@ -59,3 +59,4 @@
 | 03 | Jira MCP + Service Layer | 2026-03-18 | **MCP validation findings:** Instance mkumar-personal.atlassian.net is standard Jira (not Premium) — only Epic/Story/Task/Subtask present, no Initiative/Feature. GET /search deprecated → switched paginateJiraSearch to POST /search/jql. Sprint field customfield_10020 ✅. Story points customfield_10016 present but null (not in use). VITE_HIERARCHY_STRATEGY should be LABEL_BASED for this instance. |
 | 04 | Data Models & Types | 2026-03-18 | jira.types.ts (raw API shapes), roadmap.types.ts (domain model with Initiative→Story, SlippageSeverity, HierarchyNode), sprint.types.ts (SprintReport, ExecutiveSummary, TeamSummary). Type-check passes clean. |
 | 05 | App Shell & Navigation | 2026-03-18 | App.tsx lazy-routes, AppShell grid layout, sidebar NavLink with active state, AppHeader with theme toggle + "Last synced: Never", SettingsPage with Salt DS FormField/Input/Dropdown, Test Connection button, Banner success/error. type-check ✅ lint ✅ 15 tests ✅ build ✅ |
+| 06 | Roadmap Hierarchy Grid | 2026-03-18 | Custom hierarchy tree via expansion state (AG Grid v33 tree data is Enterprise-only). RoadmapGrid: per-level indent + chevron toggle, severity color badges, JiraLink key column, CSV export, text search, severity filter with ancestor inclusion. RoadmapPage: toolbar with search, severity checkboxes, expand/collapse all. type-check ✅ lint ✅ 15 tests ✅ build ✅ |
