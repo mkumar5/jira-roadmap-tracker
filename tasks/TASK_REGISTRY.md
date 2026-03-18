@@ -31,7 +31,7 @@
 | 04 | [Data Models & Types](./04-data-models.md) | DONE | architect | Domain model types defined: Initiative→Story hierarchy, sprint reports, slippage severity, HierarchyNode for AG Grid tree data |
 | 05 | [App Shell & Navigation](./05-app-shell.md) | DONE | ui-developer | App shell, routing, sidebar navigation, settings page with Jira config + Test Connection |
 | 06 | [Roadmap Hierarchy Grid](./06-roadmap-grid.md) | DONE | ui-developer | Roadmap hierarchy tree grid with slippage colors, filters, CSV export |
-| 07 | [Sprint Tracking View](./07-sprint-tracking.md) | PENDING | ui-developer | Per-team sprint board + grid |
+| 07 | [Sprint Tracking View](./07-sprint-tracking.md) | DONE | ui-developer | Sprint tracking: team cards, stories grid, carryover detection, auto-refresh |
 | 08 | [Slippage Detection Engine](./08-slippage-engine.md) | PENDING | jira-integrator | Algorithm + slippage dashboard |
 | 09 | [Sprint Report Generator](./09-sprint-reports.md) | PENDING | reporter | End-of-sprint report UI + export |
 | 10 | [Executive Dashboard](./10-executive-dashboard.md) | PENDING | ui-developer | KPI cards + charts + summary |
@@ -60,3 +60,4 @@
 | 04 | Data Models & Types | 2026-03-18 | jira.types.ts (raw API shapes), roadmap.types.ts (domain model with Initiative→Story, SlippageSeverity, HierarchyNode), sprint.types.ts (SprintReport, ExecutiveSummary, TeamSummary). Type-check passes clean. |
 | 05 | App Shell & Navigation | 2026-03-18 | App.tsx lazy-routes, AppShell grid layout, sidebar NavLink with active state, AppHeader with theme toggle + "Last synced: Never", SettingsPage with Salt DS FormField/Input/Dropdown, Test Connection button, Banner success/error. type-check ✅ lint ✅ 15 tests ✅ build ✅ |
 | 06 | Roadmap Hierarchy Grid | 2026-03-18 | Custom hierarchy tree via expansion state (AG Grid v33 tree data is Enterprise-only). RoadmapGrid: per-level indent + chevron toggle, severity color badges, JiraLink key column, CSV export, text search, severity filter with ancestor inclusion. RoadmapPage: toolbar with search, severity checkboxes, expand/collapse all. type-check ✅ lint ✅ 15 tests ✅ build ✅ |
+| 07 | Sprint Tracking View | 2026-03-18 | SprintTeamCard (Salt DS Card, LinearProgress time/points bars, health badge), SprintStoriesGrid (AG Grid sorted by status, carried-over rows highlighted red), SprintTrackingPage (board→sprint→issues data cascade, team filter dropdown, summary row on/at-risk/slipping, auto-refresh 5min). timesCarried computed from sprint history length. type-check ✅ lint ✅ 15 tests ✅ build ✅ |

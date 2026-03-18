@@ -163,7 +163,7 @@ function mapStory(issue: JiraIssue): Story {
     epicKey: f.parent?.key ?? f.customfield_10014 ?? null,
     storyPoints: f.customfield_10016 ?? null,
     sprint: activeSprint ? mapSprintField(activeSprint) : null,
-    timesCarried: 0,
+    timesCarried: Math.max(0, (sprints?.length ?? 1) - 1),
     priority: mapPriority(f.priority.name),
   };
 }
