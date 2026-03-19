@@ -33,5 +33,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Claude local settings (may contain API keys)
+# Claude settings (contain machine-specific paths and may contain API keys)
+.claude/settings.json
 .claude/settings.local.json
