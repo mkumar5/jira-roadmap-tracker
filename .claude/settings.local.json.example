@@ -1,0 +1,79 @@
+{
+  "mcpServers": {
+    "jira": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-jira"],
+      "env": {
+        "JIRA_HOST": "yourorg.atlassian.net",
+        "JIRA_EMAIL": "you@example.com",
+        "JIRA_API_TOKEN": "your-jira-api-token"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_github_token"
+      }
+    }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(git:*)",
+      "Bash(vite:*)",
+      "Bash(vitest:*)",
+      "Bash(tsc:*)",
+      "Bash(eslint:*)",
+      "Bash(prettier:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(cat:*)",
+      "Bash(echo:*)",
+      "WebFetch(domain:*.atlassian.net)",
+      "WebFetch(domain:api.github.com)"
+    ],
+    "deny": [
+      "Bash(curl:* --data *password*)",
+      "Bash(rm:-rf /)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write \"$CLAUDE_TOOL_RESULT_FILE_PATH\" 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[Claude] Session ended. Check tasks/TASK_REGISTRY.md for next steps.'"
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "VITE_APP_NAME": "Jira Roadmap Manager",
+    "NODE_ENV": "development"
+  },
+  "model": {
+    "planning": "claude-opus-4-6",
+    "execution": "claude-sonnet-4-6",
+    "note": "Use opus for reading task files + designing. Switch to sonnet before writing any code. See CLAUDE.md model assignment policy."
+  }
+}
