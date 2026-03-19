@@ -1,0 +1,98 @@
+{
+  "type": "record",
+  "name": "OrderExecutedEvent",
+  "namespace": "com.acme.trading.events",
+  "doc": "Published to trade.executions.v1 when an order fill is confirmed. Schema evolution: BACKWARD_TRANSITIVE — all new fields must have defaults.",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string",
+      "doc": "UUID v4 — unique identifier for this event instance (not the execution)"
+    },
+    {
+      "name": "eventVersion",
+      "type": "int",
+      "default": 1,
+      "doc": "Schema version for consumer routing. Increment on breaking logical changes."
+    },
+    {
+      "name": "orderId",
+      "type": "string",
+      "doc": "Source order identifier, e.g. ORD-2026-0001"
+    },
+    {
+      "name": "executionId",
+      "type": "string",
+      "doc": "Unique per fill. Used for idempotency deduplication at consumer side."
+    },
+    {
+      "name": "symbol",
+      "type": "string",
+      "doc": "Instrument ticker symbol, e.g. AAPL"
+    },
+    {
+      "name": "side",
+      "type": {
+        "type": "enum",
+        "name": "OrderSide",
+        "symbols": ["BUY", "SELL", "SELL_SHORT", "BUY_TO_COVER"],
+        "doc": "Order direction"
+      }
+    },
+    {
+      "name": "quantity",
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 18,
+        "scale": 8
+      },
+      "doc": "Executed quantity with 8 decimal places. FINRA CAT Rule 613 requires fractional share precision."
+    },
+    {
+      "name": "price",
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 18,
+        "scale": 4
+      },
+      "doc": "Execution price with 4 decimal places."
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "default": "USD",
+      "doc": "ISO 4217 currency code. Defaults to USD."
+    },
+    {
+      "name": "executedAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-micros"
+      },
+      "doc": "UTC microsecond timestamp of execution. Required for FINRA CAT sub-second reporting."
+    },
+    {
+      "name": "venue",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Execution venue MIC code, e.g. XNAS. Null if not applicable."
+    },
+    {
+      "name": "catReportingId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "FINRA CAT linkage ID assigned after submission. Null until CAT confirms receipt."
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Extensible key-value pairs for downstream enrichment. Do not use for required fields."
+    }
+  ]
+}

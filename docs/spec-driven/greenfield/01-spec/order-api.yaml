@@ -1,0 +1,166 @@
+openapi: 3.1.0
+info:
+  title: Order Notification Service — Admin API
+  version: 1.0.0
+  description: |
+    Internal admin API for the Order Notification Service.
+    Kafka is the primary output channel; this REST API exposes
+    health, metrics, and dead-letter queue management.
+  contact:
+    name: Trade Lifecycle Team
+    email: trade-lifecycle@acme.com
+
+servers:
+  - url: https://ons.internal.acme.com/api/v1
+    description: Production
+  - url: https://ons-staging.internal.acme.com/api/v1
+    description: Staging
+
+paths:
+  /health:
+    get:
+      summary: Service health check
+      operationId: getHealth
+      tags: [Operations]
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service is degraded (Kafka disconnected or circuit open)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /metrics:
+    get:
+      summary: Prometheus-compatible metrics
+      operationId: getMetrics
+      tags: [Operations]
+      responses:
+        '200':
+          description: Metrics in Prometheus text format
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  # HELP ons_events_published_total Total events published
+                  ons_events_published_total 42381
+                  ons_publish_latency_p99_ms 287.3
+
+  /dlq:
+    get:
+      summary: List dead-letter queue entries
+      operationId: listDlq
+      tags: [Dead Letter Queue]
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 500
+        - name: since
+          in: query
+          description: ISO 8601 timestamp filter
+          schema:
+            type: string
+            format: date-time
+            example: '2026-03-01T00:00:00Z'
+      responses:
+        '200':
+          description: DLQ entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DlqEntry'
+
+  /dlq/{executionId}/replay:
+    post:
+      summary: Replay a single DLQ entry
+      operationId: replayDlqEntry
+      tags: [Dead Letter Queue]
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: EX-20260301-0042
+      responses:
+        '202':
+          description: Replay accepted, event will be re-published
+        '404':
+          description: Execution ID not found in DLQ
+        '409':
+          description: Event already successfully published (idempotency check)
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status, kafka, circuitBreaker, uptime]
+      properties:
+        status:
+          type: string
+          enum: [UP, DEGRADED, DOWN]
+        kafka:
+          type: object
+          properties:
+            connected:
+              type: boolean
+            lag:
+              type: integer
+              description: Producer queue depth
+        circuitBreaker:
+          type: string
+          enum: [CLOSED, OPEN, HALF_OPEN]
+        uptime:
+          type: integer
+          description: Seconds since last restart
+
+    DlqEntry:
+      type: object
+      required: [executionId, failedAt, reason, retryCount]
+      properties:
+        executionId:
+          type: string
+          example: EX-20260301-0042
+        orderId:
+          type: string
+          example: ORD-2026-0001
+        symbol:
+          type: string
+          example: AAPL
+        quantity:
+          type: string
+          description: BigDecimal as string, scale=8
+          example: "100.00000000"
+        price:
+          type: string
+          description: BigDecimal as string, scale=4
+          example: "182.3400"
+        failedAt:
+          type: string
+          format: date-time
+        reason:
+          type: string
+          example: "KafkaTimeoutException: Leader not available for partition 2"
+        retryCount:
+          type: integer
+          example: 3
+
+  securitySchemes:
+    mTLS:
+      type: mutualTLS
+      description: Client certificates required (internal only)
+
+security:
+  - mTLS: []

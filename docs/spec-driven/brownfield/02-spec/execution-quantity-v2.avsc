@@ -1,0 +1,85 @@
+{
+  "type": "record",
+  "name": "ExecutionEvent",
+  "namespace": "com.acme.trading.cat",
+  "doc": "FINRA CAT execution event — v2 schema with Decimal(18,8) quantity precision. Backward compatible with v1 (old consumers receive default BigDecimal(0) for executionQuantity until upgraded). RFC: RFC-2026-014. ADR: ADR-022.",
+  "fields": [
+    {
+      "name": "executionId",
+      "type": "string",
+      "doc": "Unique identifier for this fill. Format: EX-YYYYMMDD-NNNN"
+    },
+    {
+      "name": "orderId",
+      "type": "string",
+      "doc": "Parent order identifier. Format: ORD-YYYY-NNNN"
+    },
+    {
+      "name": "symbol",
+      "type": "string",
+      "doc": "Instrument ticker symbol, e.g. AAPL"
+    },
+    {
+      "name": "side",
+      "type": {
+        "type": "enum",
+        "name": "ExecutionSide",
+        "symbols": ["BUY", "SELL", "SELL_SHORT", "BUY_TO_COVER"],
+        "default": "BUY"
+      }
+    },
+    {
+      "name": "executionQuantity",
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 18,
+        "scale": 8
+      },
+      "doc": "CHANGED from v1 Long to Decimal(18,8). Supports fractional shares per FINRA CAT Amendment effective 2026-04-01. Default: 0 (backward compatible — old consumers read 0 until upgraded).",
+      "default": "\u0000"
+    },
+    {
+      "name": "executionPrice",
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 18,
+        "scale": 4
+      },
+      "doc": "CHANGED from v1 long (basis points) to Decimal(18,4). Scale=4 supports sub-penny pricing."
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "default": "USD",
+      "doc": "ISO 4217 currency code"
+    },
+    {
+      "name": "executedAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-micros"
+      },
+      "doc": "UTC execution timestamp in microseconds. FINRA CAT requires sub-second precision."
+    },
+    {
+      "name": "venue",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Exchange MIC code, e.g. XNAS for NASDAQ. Null for OTC."
+    },
+    {
+      "name": "schemaVersion",
+      "type": "int",
+      "default": 2,
+      "doc": "Schema version for consumer routing. v1=Long qty (deprecated), v2=Decimal qty."
+    },
+    {
+      "name": "catSubmissionId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "FINRA CAT submission ID. Set after successful CAT submission. Null before submission."
+    }
+  ]
+}
