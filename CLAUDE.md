@@ -149,6 +149,25 @@ This project uses two MCP servers configured in `.claude/settings.json`:
 - Never commit `.env` or `.env.local`
 - PR: one per task, squash merge
 
+### GitHub Push Authentication
+
+The GitHub PAT is stored in `.env` as `GITHUB_TOKEN`. Always push using:
+
+```bash
+source .env && git remote set-url origin "https://mkumar5:${GITHUB_TOKEN}@github.com/mkumar5/jira-roadmap-tracker.git"
+git push origin main
+```
+
+**If push fails with 401:** The token is expired. Generate a new one at:
+`https://github.com/settings/tokens` → Fine-grained or Classic PAT → scopes: `repo` (full)
+
+Then update `.env`:
+```
+GITHUB_TOKEN="ghp_your_new_token_here"
+```
+
+And reset the remote URL with the new token (same command above).
+
 ### Commit message footer (always use this format)
 Every commit must end with:
 ```
@@ -173,6 +192,27 @@ Built with Claude Code — https://claude.ai/claude-code
 
 All env vars must be prefixed with `VITE_` to be exposed to the browser.
 See `.env.example` for required variables. Never hardcode credentials.
+
+### Jira Authentication
+
+Jira credentials flow: `.env` → `VITE_JIRA_EMAIL` / `VITE_JIRA_API_TOKEN`
+→ `jira.client.ts` `getCredentials()` → `Authorization: Basic base64(email:token)`
+→ Vite proxy forwards to `https://VITE_JIRA_HOST/rest/api/3` and `/rest/agile/1.0`
+
+**Critical proxy rules (vite.config.ts):**
+- Browser User-Agent is replaced with `jira-roadmap-manager/1.0 node-proxy` — Jira Cloud
+  enforces strict XSRF on POST /search/jql when it detects a browser UA (Safari/Chrome)
+- `X-Atlassian-Token: no-check` is set on every proxied request
+- Browser security headers (`sec-fetch-*`, `origin`, `referer`, `cookie`) are stripped
+- Both `/api/jira` (REST API v3) and `/api/jira/agile` (Agile API v1) rules apply these
+
+**If you see 403 XSRF errors:** The proxy User-Agent replacement is likely missing.
+Check `vite.config.ts` `configure` handlers are present on both proxy rules.
+
+**If you see 401 errors:** Token is wrong or empty. Check Settings page or `.env` values.
+`getCredentials()` uses `||` (not `??`) so empty strings fall back to env vars.
+
+**Jira API token:** Generate at `https://id.atlassian.com/manage-profile/security/api-tokens`
 
 ## Architecture Decisions
 
