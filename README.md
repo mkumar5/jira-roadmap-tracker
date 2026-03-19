@@ -71,7 +71,17 @@ VITE_HIERARCHY_STRATEGY=LABEL_BASED         # see Hierarchy Strategies below
 GITHUB_TOKEN=ghp_your_token                 # for git push only
 ```
 
-### 3. Run
+### 3. Configure Claude Code settings (optional)
+
+If you plan to use Claude Code CLI with this repo, copy the example settings:
+
+```bash
+cp .claude/settings.local.json.example .claude/settings.local.json
+```
+
+Edit `.claude/settings.local.json` and fill in your Jira and GitHub credentials under `mcpServers`. This file is gitignored — your credentials stay local.
+
+### 4. Run
 
 ```bash
 npm run dev
@@ -139,8 +149,9 @@ src/
 └── utils/               # date.utils, slippage.utils, hierarchy.utils, report.utils
 tasks/                   # Numbered task files + TASK_REGISTRY.md
 .claude/
-├── agents/              # Specialist Claude agents
-└── commands/            # Slash commands (/build-all, /sprint-report, etc.)
+├── agents/                        # Specialist Claude agents
+├── commands/                      # Slash commands (/build-all, /sprint-report, etc.)
+└── settings.local.json.example    # Claude Code settings template (copy → settings.local.json)
 ```
 
 ---
