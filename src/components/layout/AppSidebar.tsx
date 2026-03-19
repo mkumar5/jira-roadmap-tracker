@@ -29,7 +29,7 @@ export const AppSidebar = () => {
 
   return (
     <nav style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <ul role="list" style={{ listStyle: 'none', flex: 1, padding: 0 }}>
+      <ul style={{ listStyle: 'none', flex: 1, padding: 0 }}>
         {MAIN_NAV.map((item) => {
           const isActive = location.pathname === item.path;
           return (
@@ -47,7 +47,7 @@ export const AppSidebar = () => {
         })}
       </ul>
 
-      <ul role="list" style={{ listStyle: 'none', padding: 0, borderTop: '1px solid var(--salt-separable-primary-borderColor)' }}>
+      <ul style={{ listStyle: 'none', padding: 0, borderTop: '1px solid var(--salt-separable-primary-borderColor)' }}>
         <li>
           <NavigationItem
             active={location.pathname === '/settings'}

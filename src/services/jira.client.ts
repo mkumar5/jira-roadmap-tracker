@@ -18,7 +18,7 @@ function getCredentials(): string {
       const email = parsed.state?.jiraEmail || JIRA_EMAIL || '';
       const token = parsed.state?.jiraApiToken || JIRA_API_TOKEN || '';
       if (import.meta.env.DEV) {
-        console.log('[Jira Auth] using email:', email ? email.slice(0, 4) + '***' : '(empty)');
+        console.warn('[Jira Auth] using email:', email ? email.slice(0, 4) + '***' : '(empty)');
       }
       return btoa(`${email}:${token}`);
     }
