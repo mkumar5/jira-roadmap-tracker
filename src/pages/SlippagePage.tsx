@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useRef, useDeferredValue } from 'react';
-import { Text, Input, Checkbox, CheckboxGroup, Button } from '@salt-ds/core';
+import { Text, Input, Checkbox, CheckboxGroup, Button, SplitLayout, FlowLayout } from '@salt-ds/core';
 import { TabsNext, TabNext, TabListNext, TabNextTrigger, TabNextPanel } from '@salt-ds/lab';
 import type { GridApi } from 'ag-grid-community';
 import { SlippageGrid, AtRiskGrid } from '@/components/roadmap/SlippageGrid';
@@ -120,26 +120,23 @@ export const SlippagePage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--salt-spacing-150)' }}>
       {/* Page header */}
-      <div className="page-header">
-        <Text styleAs="h1">Slippage Alerts</Text>
-        <div style={{ display: 'flex', gap: 'var(--salt-spacing-100)', alignItems: 'center' }}>
-          {lastChecked && (
-            <Text styleAs="label" color="secondary">
-              Last checked {lastChecked}
-            </Text>
-          )}
-          <Button
-            variant="secondary"
-            onClick={() => void refetchSlipped()}
-            disabled={slippedLoading}
-          >
-            Refresh
-          </Button>
-          <Button variant="secondary" onClick={handleExportCsv}>
-            Export CSV
-          </Button>
-        </div>
-      </div>
+      <SplitLayout
+        align="center"
+        startItem={<Text styleAs="h4" style={{ fontWeight: 700 }}>Slippage Alerts</Text>}
+        endItem={
+          <FlowLayout gap={1} align="center">
+            {lastChecked && (
+              <Text styleAs="label" color="secondary">Last checked {lastChecked}</Text>
+            )}
+            <Button variant="secondary" onClick={() => void refetchSlipped()} disabled={slippedLoading}>
+              Refresh
+            </Button>
+            <Button variant="secondary" onClick={handleExportCsv}>
+              Export CSV
+            </Button>
+          </FlowLayout>
+        }
+      />
 
       {/* Summary banner */}
       <SlippageSummaryBanner
@@ -150,7 +147,7 @@ export const SlippagePage = () => {
       />
 
       {/* Filter toolbar */}
-      <div className="page-toolbar">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--salt-spacing-100)', flexWrap: 'wrap', paddingBottom: 'var(--salt-spacing-75)', borderBottom: '1px solid var(--salt-separable-primary-borderColor)' }}>
         <Input
           value={searchInput}
           placeholder="Search key, summary, assignee…"

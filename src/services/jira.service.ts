@@ -80,7 +80,7 @@ function mapBase(issue: JiraIssue) {
     startDate: (f['customfield_10015'] as string | undefined) ?? null,
     createdAt: f.created,
     updatedAt: f.updated,
-    labels: f.labels,
+    labels: f.labels ?? [],
     projectKey: f.project.key,
     jiraUrl: jiraIssueUrl(JIRA_HOST, issue.key),
   };
@@ -164,7 +164,7 @@ function mapStory(issue: JiraIssue): Story {
     storyPoints: f.customfield_10016 ?? null,
     sprint: activeSprint ? mapSprintField(activeSprint) : null,
     timesCarried: Math.max(0, (sprints?.length ?? 1) - 1),
-    priority: mapPriority(f.priority.name),
+    priority: mapPriority(f.priority?.name ?? 'Medium'),
   };
 }
 
@@ -207,7 +207,7 @@ export const jiraService = {
   async fetchInitiatives(projectKeys: string[]): Promise<Initiative[]> {
     if (projectKeys.length === 0) return [];
     const projectList = projectKeys.map((k) => `"${k}"`).join(',');
-    const jql = `project in (${projectList}) AND issuetype = "${ISSUE_TYPES.INITIATIVE}" AND statusCategory != Done ORDER BY duedate ASC`;
+    const jql = `project in (${projectList}) AND issuetype = "${ISSUE_TYPES.INITIATIVE}" AND status not in ("Done","Closed","Released") ORDER BY duedate ASC`;
     return paginateJiraSearch(jql, FIELD_SETS.ROADMAP, mapInitiative);
   },
 
@@ -230,7 +230,7 @@ export const jiraService = {
       jql = `parent = "${deliverableKey}" AND issuetype = "${ISSUE_TYPES.EPIC}" ORDER BY duedate ASC`;
     } else if (projectKeys && projectKeys.length > 0) {
       const projectList = projectKeys.map((k) => `"${k}"`).join(',');
-      jql = `project in (${projectList}) AND issuetype = "${ISSUE_TYPES.EPIC}" AND statusCategory != Done ORDER BY duedate ASC`;
+      jql = `project in (${projectList}) AND issuetype = "${ISSUE_TYPES.EPIC}" AND status not in ("Done","Closed","Released") ORDER BY duedate ASC`;
     } else {
       return [];
     }
@@ -251,7 +251,7 @@ export const jiraService = {
    */
   async fetchBoards(projectKey: string): Promise<Board[]> {
     const { data } = await jiraAgileClient.get<JiraBoardListResponse>('/board', {
-      params: { projectKeyOrId: projectKey, maxResults: PAGINATION.BOARD_MAX, type: 'scrum' },
+      params: { projectKeyOrId: projectKey, maxResults: PAGINATION.BOARD_MAX },
     });
     return data.values.map(mapBoard);
   },
@@ -287,7 +287,7 @@ export const jiraService = {
     for (const result of results) {
       if (result.status === 'fulfilled') {
         for (const s of result.value.sprints) {
-          sprints.push(mapSprintField(s));
+          sprints.push({ ...mapSprintField(s), boardId: result.value.boardId });
         }
       }
     }
@@ -327,25 +327,42 @@ export const jiraService = {
   async fetchSlippedItems(projectKeys: string[]): Promise<SlippedItem[]> {
     if (projectKeys.length === 0) return [];
     const projectList = projectKeys.map((k) => `"${k}"`).join(',');
-    const types = [ISSUE_TYPES.INITIATIVE, ISSUE_TYPES.DELIVERABLE, ISSUE_TYPES.EPIC, ISSUE_TYPES.STORY]
+    // Only include issue types that exist in standard Jira Cloud (no Initiative/Feature).
+    // For Jira Premium instances with those types, add them via issueTypes parameter.
+    const types = [ISSUE_TYPES.EPIC, ISSUE_TYPES.STORY, ISSUE_TYPES.TASK]
       .map((t) => `"${t}"`)
       .join(',');
-    const jql = `project in (${projectList}) AND duedate < now() AND statusCategory not in (Done) AND issuetype in (${types}) ORDER BY duedate ASC`;
+    const jql = `project in (${projectList}) AND duedate < now() AND status not in ("Done","Closed","Released") AND issuetype in (${types}) ORDER BY duedate ASC`;
     return paginateJiraSearch(jql, FIELD_SETS.SLIPPAGE, mapSlippedItem);
   },
 
   /**
    * Fetch items at risk — due within N days and not done.
-   * JQL: duedate >= now() AND duedate <= Nd AND statusCategory not in (Done)
+   * JQL: duedate >= now() AND duedate <= "+Nd" AND statusCategory not in (Done)
    */
   async fetchAtRiskItems(projectKeys: string[], days = 14): Promise<AtRiskItem[]> {
     if (projectKeys.length === 0) return [];
     const projectList = projectKeys.map((k) => `"${k}"`).join(',');
-    const types = [ISSUE_TYPES.INITIATIVE, ISSUE_TYPES.DELIVERABLE, ISSUE_TYPES.EPIC]
+    const types = [ISSUE_TYPES.EPIC, ISSUE_TYPES.STORY, ISSUE_TYPES.TASK]
       .map((t) => `"${t}"`)
       .join(',');
-    const jql = `project in (${projectList}) AND duedate >= now() AND duedate <= "${days}d" AND statusCategory not in (Done) AND issuetype in (${types}) ORDER BY duedate ASC`;
+    // Use ISO date string — Jira Cloud's /search/jql doesn't support "+Nd" relative syntax
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + days);
+    const endDateStr = endDate.toISOString().slice(0, 10); // YYYY-MM-DD
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const jql = `project in (${projectList}) AND duedate >= "${todayStr}" AND duedate <= "${endDateStr}" AND status not in ("Done","Closed","Released") AND issuetype in (${types}) ORDER BY duedate ASC`;
     return paginateJiraSearch(jql, FIELD_SETS.SLIPPAGE, mapAtRiskItem);
+  },
+
+  /**
+   * Fetch specific epics by their keys (used by sprint report for slipped epic lookup).
+   */
+  async fetchEpicsByKeys(keys: string[]): Promise<Epic[]> {
+    if (keys.length === 0) return [];
+    const keyList = keys.map((k) => `"${k}"`).join(',');
+    const jql = `key in (${keyList}) AND issuetype = "${ISSUE_TYPES.EPIC}" ORDER BY key ASC`;
+    return paginateJiraSearch(jql, FIELD_SETS.ROADMAP, mapEpic);
   },
 
   /**

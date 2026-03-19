@@ -1,48 +1,64 @@
-import { NavLink } from 'react-router-dom';
-import { Text } from '@salt-ds/core';
+import { NavigationItem } from '@salt-ds/core';
+import {
+  DashboardSolidIcon,
+  HierarchySolidIcon,
+  ProgressInprogressIcon,
+  WarningSolidIcon,
+  BuildReportSolidIcon,
+  SettingsSolidIcon,
+} from '@salt-ds/icons';
+import { NavLink, useLocation } from 'react-router-dom';
+import type { ReactElement } from 'react';
 
 interface NavItem {
   path: string;
   label: string;
-  icon: string;
+  icon: ReactElement;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { path: '/dashboard', label: 'Executive Dashboard', icon: '📊' },
-  { path: '/roadmap', label: 'Roadmap', icon: '🗺️' },
-  { path: '/sprints', label: 'Sprint Tracking', icon: '⚡' },
-  { path: '/slippage', label: 'Slippage Alerts', icon: '🔴' },
-  { path: '/reports', label: 'Sprint Reports', icon: '📋' },
-  { path: '/settings', label: 'Settings', icon: '⚙️' },
+const MAIN_NAV: NavItem[] = [
+  { path: '/dashboard', label: 'Dashboard', icon: <DashboardSolidIcon /> },
+  { path: '/roadmap', label: 'Roadmap', icon: <HierarchySolidIcon /> },
+  { path: '/sprints', label: 'Sprint Tracking', icon: <ProgressInprogressIcon /> },
+  { path: '/slippage', label: 'Slippage Alerts', icon: <WarningSolidIcon /> },
+  { path: '/reports', label: 'Sprint Reports', icon: <BuildReportSolidIcon /> },
 ];
 
-export const AppSidebar = () => (
-  <ul style={{ listStyle: 'none' }}>
-    {NAV_ITEMS.map((item) => (
-      <li key={item.path}>
-        <NavLink
-          to={item.path}
-          style={({ isActive }) => ({
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '10px 16px',
-            textDecoration: 'none',
-            color: isActive
-              ? 'var(--salt-color-blue-600)'
-              : 'var(--salt-color-foreground)',
-            backgroundColor: isActive
-              ? 'color-mix(in srgb, var(--salt-color-blue-600) 10%, transparent)'
-              : 'transparent',
-            borderLeft: isActive ? '3px solid var(--salt-color-blue-600)' : '3px solid transparent',
-            fontWeight: isActive ? 600 : 400,
-            fontSize: '14px',
-          })}
-        >
-          <span aria-hidden="true">{item.icon}</span>
-          <Text styleAs="label">{item.label}</Text>
-        </NavLink>
-      </li>
-    ))}
-  </ul>
-);
+export const AppSidebar = () => {
+  const location = useLocation();
+
+  return (
+    <nav style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <ul role="list" style={{ listStyle: 'none', flex: 1, padding: 0 }}>
+        {MAIN_NAV.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <li key={item.path}>
+              <NavigationItem
+                active={isActive}
+                orientation="vertical"
+                render={<NavLink to={item.path} />}
+              >
+                {item.icon}
+                {item.label}
+              </NavigationItem>
+            </li>
+          );
+        })}
+      </ul>
+
+      <ul role="list" style={{ listStyle: 'none', padding: 0, borderTop: '1px solid var(--salt-separable-primary-borderColor)' }}>
+        <li>
+          <NavigationItem
+            active={location.pathname === '/settings'}
+            orientation="vertical"
+            render={<NavLink to="/settings" />}
+          >
+            <SettingsSolidIcon />
+            Settings
+          </NavigationItem>
+        </li>
+      </ul>
+    </nav>
+  );
+};

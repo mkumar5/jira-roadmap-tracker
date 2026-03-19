@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Text, Spinner, Dropdown, Option, Button } from '@salt-ds/core';
+import { Text, Spinner, Dropdown, Option, Button, SplitLayout, FlowLayout, StackLayout, Banner, BannerContent } from '@salt-ds/core';
 import { SprintTeamCard } from '@/components/sprint/SprintTeamCard';
 import { useAllBoards, useActiveSprints, useSprintIssues } from '@/hooks/useSprint';
 import { useConfigStore } from '@/store/configStore';
@@ -9,7 +9,7 @@ export const SprintTrackingPage = () => {
   const { projectKeys } = useConfigStore();
   const [teamFilter, setTeamFilter] = useState<string[]>([]);
 
-  const { data: boards = [], isLoading: boardsLoading } = useAllBoards();
+  const { data: boards = [], isLoading: boardsLoading, isError: boardsError, error: boardsErrorObj } = useAllBoards();
   const boardIds = useMemo(() => boards.map((b) => b.id), [boards]);
 
   const { data: activeSprints = [], isLoading: sprintsLoading } = useActiveSprints(boardIds);
@@ -87,17 +87,24 @@ export const SprintTrackingPage = () => {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--salt-spacing-200)' }}>
+    <StackLayout gap={2} direction="column">
       {/* Page header */}
-      <div className="page-header">
-        <Text styleAs="h1">Sprint Tracking</Text>
-        <Text styleAs="label" color="secondary">
-          Auto-refreshes every 5 minutes
-        </Text>
-      </div>
+      <SplitLayout
+        align="center"
+        startItem={<Text styleAs="h4" style={{ fontWeight: 700 }}>Sprint Tracking</Text>}
+        endItem={<Text styleAs="label" color="secondary">Auto-refreshes every 5 minutes</Text>}
+      />
+
+      {boardsError && (
+        <Banner status="error">
+          <BannerContent>
+            Failed to load boards: {boardsErrorObj instanceof Error ? boardsErrorObj.message : 'Unknown error'}
+          </BannerContent>
+        </Banner>
+      )}
 
       {/* Toolbar */}
-      <div className="page-toolbar">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--salt-spacing-100)', flexWrap: 'wrap', paddingBottom: 'var(--salt-spacing-75)', borderBottom: '1px solid var(--salt-separable-primary-borderColor)' }}>
         <Dropdown
           selected={teamFilter.length > 0 ? teamFilter : ['All Teams']}
           onSelectionChange={(_e, selected) => {
@@ -124,17 +131,7 @@ export const SprintTrackingPage = () => {
 
       {/* Summary row */}
       {enrichedSprints.length > 0 && (
-        <div
-          style={{
-            display: 'flex',
-            gap: 'var(--salt-spacing-300)',
-            padding: 'var(--salt-spacing-150) var(--salt-spacing-200)',
-            background: 'var(--salt-color-background)',
-            borderRadius: 4,
-            border: '1px solid var(--salt-separable-primary-borderColor)',
-            flexWrap: 'wrap',
-          }}
-        >
+        <FlowLayout gap={3} style={{ padding: 'var(--salt-spacing-75) var(--salt-spacing-100)', background: 'var(--salt-color-background)', borderRadius: 4, border: '1px solid var(--salt-separable-primary-borderColor)' }}>
           <Text styleAs="label">
             <strong>{summaryStats.total}</strong> active sprint{summaryStats.total !== 1 ? 's' : ''}
           </Text>
@@ -151,18 +148,20 @@ export const SprintTrackingPage = () => {
               <strong>{summaryStats.slipping}</strong> slipping
             </Text>
           )}
-        </div>
+        </FlowLayout>
       )}
 
       {/* Cards grid */}
       {filteredSprints.length === 0 ? (
         <div className="empty-state" style={{ minHeight: 300 }}>
-          <Text styleAs="h3" color="secondary">
+          <Text styleAs="h4" color="secondary">
             {enrichedSprints.length === 0 ? 'No active sprints found' : 'No sprints match filter'}
           </Text>
           {enrichedSprints.length === 0 && (
-            <Text color="secondary">
-              Boards were found but have no active sprints. Check Jira project configuration.
+            <Text styleAs="label" color="secondary">
+              {boards.length > 0
+                ? `Found ${boards.length} board(s) but none have an active sprint.`
+                : 'No boards found for configured project keys.'}
             </Text>
           )}
         </div>
@@ -192,6 +191,6 @@ export const SprintTrackingPage = () => {
           {boards.length - activeSprints.length} board(s) have no active sprint
         </Text>
       )}
-    </div>
+    </StackLayout>
   );
 };

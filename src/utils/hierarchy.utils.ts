@@ -1,5 +1,6 @@
 import type { Initiative, HierarchyNode } from '@/types';
 import { calculateSlippage, getDaysPastDue } from './slippage.utils';
+import { jiraService } from '@/services/jira.service';
 
 /**
  * Build a flat list of HierarchyNode objects for AG Grid tree data.
@@ -91,6 +92,27 @@ export function filterBySlippage(
   }
 
   return nodes.filter((n) => slippedPaths.has(n.path.join('/')));
+}
+
+/**
+ * Build hierarchy for LABEL_BASED strategy (standard Jira without Premium).
+ * Top level = Epic, second level = Story.
+ * Fetches all epics, then fetches stories for each epic in parallel.
+ */
+export async function buildLabelBasedNodes(projectKeys: string[]): Promise<HierarchyNode[]> {
+  if (projectKeys.length === 0) return [];
+  const today = new Date();
+  const epics = await jiraService.fetchEpics(undefined, projectKeys);
+  const storyLists = await Promise.all(epics.map((e) => jiraService.fetchStories(e.key)));
+  const nodes: HierarchyNode[] = [];
+  for (let i = 0; i < epics.length; i++) {
+    const epic = epics[i];
+    nodes.push(toNode(epic, [epic.key], 'epic', today));
+    for (const story of storyLists[i]) {
+      nodes.push(toNode(story, [epic.key, story.key], 'story', today));
+    }
+  }
+  return nodes;
 }
 
 /**

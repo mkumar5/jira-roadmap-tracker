@@ -1,6 +1,7 @@
 import { differenceInDays, formatDistanceToNow, parseISO, format, isAfter, isBefore } from 'date-fns';
 
 export function sprintDaysRemaining(endDate: string): number {
+  if (!endDate) return 0;
   return Math.max(0, differenceInDays(parseISO(endDate), new Date()));
 }
 
@@ -9,6 +10,7 @@ export function sprintDaysElapsed(startDate: string): number {
 }
 
 export function sprintProgress(startDate: string, endDate: string): number {
+  if (!startDate || !endDate) return 0;
   const total = differenceInDays(parseISO(endDate), parseISO(startDate));
   if (total <= 0) return 100;
   const elapsed = differenceInDays(new Date(), parseISO(startDate));

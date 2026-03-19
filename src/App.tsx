@@ -1,7 +1,28 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, Component } from 'react';
+import type { ReactNode, ErrorInfo } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Spinner } from '@salt-ds/core';
 import { AppShell } from './components/layout/AppShell';
+
+class PageErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null };
+  static getDerivedStateFromError(error: Error) { return { error }; }
+  componentDidCatch(error: Error, info: ErrorInfo) { console.error('[PageErrorBoundary]', error, info); }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ padding: 32, fontFamily: 'monospace', color: 'red' }}>
+          <strong>Render error:</strong> {(this.state.error as Error).message}
+          <pre style={{ marginTop: 8, fontSize: 12, whiteSpace: 'pre-wrap' }}>
+            {(this.state.error as Error).stack}
+          </pre>
+          <button onClick={() => this.setState({ error: null })} style={{ marginTop: 16 }}>Retry</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const ExecutiveDashboardPage = lazy(() =>
   import('./pages/ExecutiveDashboardPage').then((m) => ({ default: m.ExecutiveDashboardPage }))
@@ -36,7 +57,7 @@ export default function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route
             path="dashboard"
-            element={<Suspense fallback={<PageSpinner />}><ExecutiveDashboardPage /></Suspense>}
+            element={<PageErrorBoundary><Suspense fallback={<PageSpinner />}><ExecutiveDashboardPage /></Suspense></PageErrorBoundary>}
           />
           <Route
             path="roadmap"
@@ -44,7 +65,7 @@ export default function App() {
           />
           <Route
             path="sprints"
-            element={<Suspense fallback={<PageSpinner />}><SprintTrackingPage /></Suspense>}
+            element={<PageErrorBoundary><Suspense fallback={<PageSpinner />}><SprintTrackingPage /></Suspense></PageErrorBoundary>}
           />
           <Route
             path="slippage"
@@ -52,7 +73,7 @@ export default function App() {
           />
           <Route
             path="reports"
-            element={<Suspense fallback={<PageSpinner />}><SprintReportPage /></Suspense>}
+            element={<PageErrorBoundary><Suspense fallback={<PageSpinner />}><SprintReportPage /></Suspense></PageErrorBoundary>}
           />
           <Route
             path="settings"

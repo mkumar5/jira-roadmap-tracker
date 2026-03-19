@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useDeferredValue } from 'react';
-import { Button, Text, Input, Checkbox, CheckboxGroup } from '@salt-ds/core';
+import { Button, Text, Input, Checkbox, CheckboxGroup, SplitLayout, FlowLayout } from '@salt-ds/core';
 import type { GridApi } from 'ag-grid-community';
 import { RoadmapGrid } from '@/components/roadmap/RoadmapGrid';
 import { useRoadmapHierarchy } from '@/hooks/useRoadmap';
@@ -81,60 +81,48 @@ export const RoadmapPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Page header */}
-      <div className="page-header">
-        <Text styleAs="h1">Roadmap</Text>
-        <div style={{ display: 'flex', gap: 'var(--salt-spacing-100)', alignItems: 'center' }}>
-          <Text styleAs="label" color="secondary">
-            {allNodes.length.toLocaleString()} items across {projectKeys.join(', ')}
-          </Text>
-          <Button variant="secondary" onClick={handleExportCsv} disabled={isLoading}>
-            Export CSV
-          </Button>
-        </div>
-      </div>
+      <SplitLayout
+        align="center"
+        style={{ marginBottom: 'var(--salt-spacing-75)' }}
+        startItem={<Text styleAs="h4" style={{ fontWeight: 700 }}>Roadmap</Text>}
+        endItem={
+          <FlowLayout gap={1} align="center">
+            {allNodes.length > 0 && (
+              <Text styleAs="label" color="secondary">
+                {allNodes.length.toLocaleString()} items · {projectKeys.join(', ')}
+              </Text>
+            )}
+            <Button variant="secondary" onClick={handleExportCsv} disabled={isLoading}>
+              Export CSV
+            </Button>
+          </FlowLayout>
+        }
+      />
 
       {/* Toolbar */}
-      <div className="page-toolbar">
-        {/* Text search */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--salt-spacing-100)', flexWrap: 'wrap', paddingBottom: 'var(--salt-spacing-75)', borderBottom: '1px solid var(--salt-separable-primary-borderColor)' }}>
         <Input
           value={searchInput}
-          placeholder="Search initiatives, epics, stories…"
-          style={{ width: 260 }}
+          placeholder="Search epics, stories…"
+          style={{ width: 240 }}
           inputProps={{ onChange: (e) => setSearchInput(e.target.value) }}
         />
-
-        {/* Severity filter */}
-        <CheckboxGroup
-          direction="horizontal"
-          aria-label="Filter by slippage severity"
-        >
+        <CheckboxGroup direction="horizontal" aria-label="Filter by slippage severity">
           {SEVERITY_OPTIONS.map(({ value, label }) => (
             <Checkbox
               key={value}
               label={label}
               value={value}
               checked={severityFilter.includes(value)}
-              onChange={(e) =>
-                handleSeverityChange(value, (e.target as HTMLInputElement).checked)
-              }
+              onChange={(e) => handleSeverityChange(value, (e.target as HTMLInputElement).checked)}
             />
           ))}
         </CheckboxGroup>
-
         <div style={{ flex: 1 }} />
-
-        {/* Expand / Collapse */}
-        <Button variant="secondary" onClick={handleExpandAll} disabled={isLoading}>
-          Expand All
-        </Button>
-        <Button variant="secondary" onClick={handleCollapseAll} disabled={isLoading}>
-          Collapse All
-        </Button>
-
+        <Button variant="secondary" onClick={handleExpandAll} disabled={isLoading}>Expand All</Button>
+        <Button variant="secondary" onClick={handleCollapseAll} disabled={isLoading}>Collapse All</Button>
         {hasActiveFilters && (
-          <Button variant="secondary" onClick={handleClearFilters}>
-            Clear Filters
-          </Button>
+          <Button variant="secondary" onClick={handleClearFilters}>Clear Filters</Button>
         )}
       </div>
 

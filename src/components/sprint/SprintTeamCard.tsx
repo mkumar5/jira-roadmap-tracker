@@ -51,8 +51,8 @@ function HealthTag({ score }: { score: number }) {
 export const SprintTeamCard = ({ sprint, stories, loading }: SprintTeamCardProps) => {
   const [expanded, setExpanded] = useState(false);
   const { committed, delivered, inProgress, carriedCount, healthScore } = computeStats(stories);
-  const daysRemaining = sprintDaysRemaining(sprint.endDate);
-  const timeProgress = sprintProgress(sprint.startDate, sprint.endDate);
+  const daysRemaining = sprint.endDate ? sprintDaysRemaining(sprint.endDate) : 0;
+  const timeProgress = sprint.startDate && sprint.endDate ? sprintProgress(sprint.startDate, sprint.endDate) : 0;
   const pointsProgress = committed > 0 ? Math.round((delivered / committed) * 100) : 0;
   const period = sprint.startDate && sprint.endDate
     ? formatSprintPeriod(sprint.startDate, sprint.endDate)

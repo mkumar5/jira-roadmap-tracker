@@ -143,9 +143,11 @@ export interface JiraDocument {
 // Jira Search API response
 export interface JiraSearchResponse {
   issues: JiraIssue[];
-  total: number;
-  startAt: number;
-  maxResults: number;
+  total?: number | null;
+  startAt?: number;
+  maxResults?: number;
+  nextPageToken?: string;
+  isLast?: boolean;
   expand?: string;
 }
 

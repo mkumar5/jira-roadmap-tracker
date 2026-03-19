@@ -13,7 +13,7 @@ export const AppThemeProvider: FC<AppThemeProviderProps> = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={{ mode, setMode, toggleMode }}>
-      <SaltProvider theme="salt" mode={mode}>
+      <SaltProvider theme="salt" mode={mode} density="high">
         <div data-theme-mode={mode} style={{ minHeight: '100vh' }}>
           {children}
         </div>

@@ -11,6 +11,33 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import './styles/global.css';
 
+// Bootstrap: clear stale localStorage if it contains broken settings (e.g. JIRA_PREMIUM default)
+// This runs before any React component mounts so the store initializes cleanly.
+;(function fixStaleSettings() {
+  try {
+    const raw = localStorage.getItem('jira-roadmap-config');
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as { state?: { hierarchyStrategy?: string; projectKeys?: string[] }; version?: number };
+    const state = parsed.state;
+    if (!state) return;
+    const envStrategy = (import.meta.env.VITE_HIERARCHY_STRATEGY as string | undefined) ?? 'LABEL_BASED';
+    const envKeys = ((import.meta.env.VITE_JIRA_PROJECT_KEYS as string | undefined) ?? '').split(',').map((k) => k.trim()).filter(Boolean);
+    let dirty = false;
+    if (state.hierarchyStrategy === 'JIRA_PREMIUM' && envStrategy !== 'JIRA_PREMIUM') {
+      state.hierarchyStrategy = envStrategy;
+      dirty = true;
+    }
+    if ((state.projectKeys ?? []).length === 0 && envKeys.length > 0) {
+      state.projectKeys = envKeys;
+      dirty = true;
+    }
+    if (dirty) {
+      parsed.version = 3;
+      localStorage.setItem('jira-roadmap-config', JSON.stringify(parsed));
+    }
+  } catch { /* ignore */ }
+})();
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

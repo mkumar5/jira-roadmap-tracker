@@ -1,31 +1,47 @@
 import { http, HttpResponse } from 'msw';
 import { initiativesFixture } from '../fixtures/initiatives.fixture';
 import { sprintsFixture } from '../fixtures/sprints.fixture';
+import { allSprintIssuesFixture, prevSprintIssuesFixture } from '../fixtures/jira-issues.fixture';
+
+const makeSearchResponse = (issues: typeof initiativesFixture) => ({
+  issues,
+  total: issues.length,
+  startAt: 0,
+  maxResults: 100,
+});
 
 export const handlers = [
-  // Jira search API
-  http.get('*/api/jira/search', ({ request }) => {
-    const url = new URL(request.url);
-    const jql = url.searchParams.get('jql') ?? '';
-
-    if (jql.includes('Initiative')) {
-      return HttpResponse.json({
-        issues: initiativesFixture,
-        total: initiativesFixture.length,
-        startAt: 0,
-        maxResults: 100,
-      });
-    }
+  // POST /search/jql (Jira Cloud REST v3)
+  http.post('*/api/jira/search/jql', async ({ request }) => {
+    const body = (await request.json()) as { jql?: string };
+    const jql = body?.jql ?? '';
 
     if (jql.includes('duedate < now()')) {
-      // Slippage query — return overdue items from fixtures
-      const slipped = initiativesFixture.filter(
+      const slipped = [...initiativesFixture, ...allSprintIssuesFixture].filter(
         (i) => i.fields.duedate && new Date(i.fields.duedate) < new Date()
       );
-      return HttpResponse.json({ issues: slipped, total: slipped.length, startAt: 0, maxResults: 100 });
+      return HttpResponse.json(makeSearchResponse(slipped));
     }
 
-    return HttpResponse.json({ issues: [], total: 0, startAt: 0, maxResults: 100 });
+    if (jql.includes('duedate >= now()')) {
+      const atRisk = [...initiativesFixture, ...allSprintIssuesFixture].filter(
+        (i) =>
+          i.fields.duedate &&
+          new Date(i.fields.duedate) >= new Date() &&
+          new Date(i.fields.duedate) <= new Date(Date.now() + 14 * 86400000)
+      );
+      return HttpResponse.json(makeSearchResponse(atRisk));
+    }
+
+    if (jql.includes('issuetype = "Epic"') || (jql.includes('issuetype in') && jql.includes('Epic'))) {
+      return HttpResponse.json(makeSearchResponse([]));
+    }
+
+    if (jql.includes('parent =') || jql.includes('Epic Link')) {
+      return HttpResponse.json(makeSearchResponse(allSprintIssuesFixture));
+    }
+
+    return HttpResponse.json(makeSearchResponse(initiativesFixture));
   }),
 
   // Jira Agile boards
@@ -35,32 +51,30 @@ export const handlers = [
         { id: 1, name: 'Team Alpha Board', type: 'scrum', location: { projectKey: 'PROJ' } },
         { id: 2, name: 'Team Beta Board', type: 'scrum', location: { projectKey: 'PROJ' } },
       ],
-      total: 2,
-      startAt: 0,
-      maxResults: 50,
-      isLast: true,
+      total: 2, startAt: 0, maxResults: 50, isLast: true,
     })
   ),
 
-  // Jira Agile sprints for a board
+  // All sprints for a board
   http.get('*/api/jira/agile/board/:boardId/sprint', ({ params }) => {
     const boardId = Number(params['boardId']);
-    const sprint = sprintsFixture.find((s) => s.boardId === boardId);
+    const boardSprints = sprintsFixture.filter((s) => s.boardId === boardId);
     return HttpResponse.json({
-      values: sprint ? [sprint] : [],
-      total: sprint ? 1 : 0,
-      startAt: 0,
-      maxResults: 50,
-      isLast: true,
+      values: boardSprints,
+      total: boardSprints.length,
+      startAt: 0, maxResults: 50, isLast: true,
     });
   }),
 
-  // Jira myself (connection test)
+  // Sprint issues
+  http.get('*/api/jira/agile/sprint/:sprintId/issue', ({ params }) => {
+    const sprintId = Number(params['sprintId']);
+    const issues = sprintId === 100 ? prevSprintIssuesFixture : allSprintIssuesFixture;
+    return HttpResponse.json({ issues, total: issues.length, startAt: 0, maxResults: 100 });
+  }),
+
+  // Jira myself
   http.get('*/api/jira/myself', () =>
-    HttpResponse.json({
-      accountId: 'test-account-id',
-      displayName: 'Test User',
-      emailAddress: 'test@example.com',
-    })
+    HttpResponse.json({ accountId: 'test-account-id', displayName: 'Test User', emailAddress: 'test@example.com' })
   ),
 ];

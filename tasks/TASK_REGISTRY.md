@@ -25,6 +25,7 @@
 
 | # | Task | Status | Agent | Notes |
 |---|------|--------|-------|-------|
+| 00 | [Jira Test Data Seeding](./00-jira-test-data.md) | DONE | jira-integrator | 5 epics (SCRUM-5–9) + 18 stories (SCRUM-10–27) seeded. Active sprint: 9 stories. Future sprint: 5 stories. Overdue epics for slippage. LABEL_BASED strategy wired. |
 | 01 | [Foundation Setup](./01-foundation-setup.md) | DONE | architect | Vite + React + TS strict, all tooling, ESLint 9 flat config, 15/15 tests pass, build produces dist/ |
 | 02 | [Salt DS + AG Grid Setup](./02-saltds-agrid-setup.md) | DONE | ui-developer | ThemeProvider + context, CSS imports ordered in main.tsx, AG Grid quartz + Salt tokens, lint/type/test/build ✅ |
 | 03 | [Jira MCP + Service Layer](./03-jira-service.md) | DONE | jira-integrator | All 10 methods implemented. POST /search/jql (GET deprecated). See notes below. |
@@ -33,9 +34,9 @@
 | 06 | [Roadmap Hierarchy Grid](./06-roadmap-grid.md) | DONE | ui-developer | Roadmap hierarchy tree grid with slippage colors, filters, CSV export |
 | 07 | [Sprint Tracking View](./07-sprint-tracking.md) | DONE | ui-developer | Sprint tracking: team cards, stories grid, carryover detection, auto-refresh |
 | 08 | [Slippage Detection Engine](./08-slippage-engine.md) | DONE | jira-integrator | Slippage engine with severity grid, at-risk tab, summary banner |
-| 09 | [Sprint Report Generator](./09-sprint-reports.md) | PENDING | reporter | End-of-sprint report UI + export |
-| 10 | [Executive Dashboard](./10-executive-dashboard.md) | PENDING | ui-developer | KPI cards + charts + summary |
-| 11 | [Tests & Coverage](./11-tests.md) | PENDING | tester | Vitest + RTL + MSW setup |
+| 09 | [Sprint Report Generator](./09-sprint-reports.md) | DONE | reporter | Sprint report generator with health score gauge, velocity trend badge, collapsible sections, markdown export + clipboard |
+| 10 | [Executive Dashboard](./10-executive-dashboard.md) | DONE | ui-developer | 6 KPI cards, CSS conic-gradient status ring, team health AG Grid, top slipped list, upcoming deadlines, key metrics footer |
+| 11 | [Tests & Coverage](./11-tests.md) | DONE | tester | 61 tests passing (7 files). Unit: slippage.utils, date.utils, hierarchy.utils, sprint.service. Integration: SettingsPage, SlippagePage, SprintTrackingPage. Services: 81% coverage (target 75% ✓). ResizeObserver polyfill added. MSW v2 POST handlers. |
 | 12 | [CI/CD & Deployment Config](./12-cicd.md) | PENDING | architect | GitHub Actions, env config |
 
 ---
@@ -62,3 +63,7 @@
 | 06 | Roadmap Hierarchy Grid | 2026-03-18 | Custom hierarchy tree via expansion state (AG Grid v33 tree data is Enterprise-only). RoadmapGrid: per-level indent + chevron toggle, severity color badges, JiraLink key column, CSV export, text search, severity filter with ancestor inclusion. RoadmapPage: toolbar with search, severity checkboxes, expand/collapse all. type-check ✅ lint ✅ 15 tests ✅ build ✅ |
 | 07 | Sprint Tracking View | 2026-03-18 | SprintTeamCard (Salt DS Card, LinearProgress time/points bars, health badge), SprintStoriesGrid (AG Grid sorted by status, carried-over rows highlighted red), SprintTrackingPage (board→sprint→issues data cascade, team filter dropdown, summary row on/at-risk/slipping, auto-refresh 5min). timesCarried computed from sprint history length. type-check ✅ lint ✅ 15 tests ✅ build ✅ |
 | 08 | Slippage Detection Engine | 2026-03-18 | SlippageGrid + AtRiskGrid (AG Grid, pinned key/severity cols, CSV export), SlippageSummaryBanner (clickable severity chips toggle filter), SlippagePage (TabsNext slipped/at-risk, severity+type+text filters, last-checked timestamp, refresh), slippageStore (Zustand, atRiskDays, alertThreshold), SettingsPage alerting section. type-check ✅ lint ✅ 15 tests ✅ build ✅ |
+| 10 | Executive Dashboard | 2026-03-18 | useExecutiveSummary hook (epics+slipped+atRisk+teamSummaries in parallel), KpiCard, StatusRing (conic-gradient donut), TeamHealthGrid (AG Grid, health bar cell renderer), TopSlippedList, UpcomingDeadlines. "Not configured" Banner state. type-check ✅ lint ✅ build ✅ |
+| 09 | Sprint Report Generator | 2026-03-18 | sprint.service.ts (generateReport/All), ReportSection/HealthScoreGauge/VelocityTrendBadge components, report.utils.ts (md export/download/clipboard), SprintReportPage (tabs per team, health score badge, Generate + Export All). type-check ✅ lint ✅ build ✅ |
+| 00 | Jira Test Data Seeding | 2026-03-18 | 5 epics + 18 stories in SCRUM project. LABEL_BASED strategy: buildLabelBasedNodes added to hierarchy.utils.ts, useRoadmapHierarchy updated. STORY_POINTS fixed to customfield_10016. Stories at-risk added to fetchAtRiskItems. .env updated to SCRUM + LABEL_BASED. type-check ✅ build ✅ |
+| 11 | Tests & Coverage | 2026-03-19 | 61 tests passing, 0 failures. Fixtures (jira-issues, sprints, initiatives), MSW v2 server (POST /search/jql), renderWithProviders helper. Unit coverage: services 81% ✅. Fixed ResizeObserver polyfill, @testing-library/dom install, date timezone bugs. |
