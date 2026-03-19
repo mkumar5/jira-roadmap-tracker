@@ -60,15 +60,15 @@ export const SprintTeamCard = ({ sprint, stories, loading }: SprintTeamCardProps
 
   return (
     <div>
-      <Card style={{ padding: 'var(--salt-spacing-200)' }}>
-        <StackLayout gap={1.5}>
+      <Card className="card-elevated" style={{ padding: 'var(--salt-spacing-200)' }}>
+        <StackLayout gap={2}>
           {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <Text styleAs="h3" style={{ fontWeight: 600 }}>
+              <Text style={{ fontWeight: 700, fontSize: 16, lineHeight: 1.3 }}>
                 {sprint.teamName || sprint.name}
               </Text>
-              <Text styleAs="label" color="secondary">
+              <Text style={{ fontSize: 13, color: 'var(--salt-color-foreground-secondary)', marginTop: 2 }}>
                 {sprint.name}
               </Text>
             </div>
@@ -77,18 +77,18 @@ export const SprintTeamCard = ({ sprint, stories, loading }: SprintTeamCardProps
 
           {/* Dates */}
           {period && (
-            <Text styleAs="label" color="secondary">
+            <Text style={{ fontSize: 13, color: 'var(--salt-color-foreground-secondary)' }}>
               {period} · {daysRemaining > 0 ? `${daysRemaining} days remaining` : 'Sprint ended'}
             </Text>
           )}
 
           {/* Sprint time progress */}
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <Text styleAs="label" color="secondary" style={{ fontSize: 11 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+              <Text style={{ fontSize: 12, color: 'var(--salt-color-foreground-secondary)', fontWeight: 500 }}>
                 Sprint time elapsed
               </Text>
-              <Text styleAs="label" color="secondary" style={{ fontSize: 11 }}>
+              <Text style={{ fontSize: 12, color: 'var(--salt-color-foreground-secondary)', fontWeight: 600 }}>
                 {timeProgress}%
               </Text>
             </div>
@@ -97,37 +97,41 @@ export const SprintTeamCard = ({ sprint, stories, loading }: SprintTeamCardProps
 
           {/* Points progress */}
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <Text styleAs="label" color="secondary" style={{ fontSize: 11 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+              <Text style={{ fontSize: 12, color: 'var(--salt-color-foreground-secondary)', fontWeight: 500 }}>
                 Points delivered
               </Text>
-              <Text styleAs="label" color="secondary" style={{ fontSize: 11 }}>
+              <Text style={{ fontSize: 12, color: 'var(--salt-color-foreground-secondary)', fontWeight: 600 }}>
                 {delivered} / {committed} pts
               </Text>
             </div>
             <LinearProgress value={pointsProgress} hideLabel aria-label="Points delivered" />
           </div>
 
-          {/* Stats */}
-          <div style={{ display: 'flex', gap: 'var(--salt-spacing-200)', flexWrap: 'wrap' }}>
-            <Text styleAs="label">
-              <strong>{committed}</strong> pts committed
-            </Text>
-            <Text styleAs="label">
-              <strong>{delivered}</strong> done
-            </Text>
-            <Text styleAs="label">
-              <strong>{inProgress}</strong> in progress
-            </Text>
+          {/* Stats row */}
+          <div style={{ display: 'flex', gap: 'var(--salt-spacing-200)', flexWrap: 'wrap', padding: 'var(--salt-spacing-100) 0', borderTop: '1px solid var(--salt-separable-primary-borderColor)' }}>
+            <span style={{ fontSize: 13 }}>
+              <strong style={{ fontVariantNumeric: 'tabular-nums' }}>{committed}</strong>
+              <span style={{ color: 'var(--salt-color-foreground-secondary)', marginLeft: 4 }}>committed</span>
+            </span>
+            <span style={{ fontSize: 13 }}>
+              <strong style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--salt-status-success-foreground)' }}>{delivered}</strong>
+              <span style={{ color: 'var(--salt-color-foreground-secondary)', marginLeft: 4 }}>done</span>
+            </span>
+            <span style={{ fontSize: 13 }}>
+              <strong style={{ fontVariantNumeric: 'tabular-nums' }}>{inProgress}</strong>
+              <span style={{ color: 'var(--salt-color-foreground-secondary)', marginLeft: 4 }}>in progress</span>
+            </span>
             {carriedCount > 0 && (
-              <Text styleAs="label" style={{ color: 'var(--salt-status-warning-foreground)' }}>
-                <strong>{carriedCount}</strong> carried over
-              </Text>
+              <span style={{ fontSize: 13, color: 'var(--salt-status-warning-foreground)' }}>
+                <strong>{carriedCount}</strong>
+                <span style={{ marginLeft: 4 }}>carried over</span>
+              </span>
             )}
             {sprint.goal && (
-              <Text styleAs="label" color="secondary" style={{ fontStyle: 'italic', width: '100%' }}>
+              <span style={{ fontSize: 13, color: 'var(--salt-color-foreground-secondary)', fontStyle: 'italic', width: '100%' }}>
                 Goal: {sprint.goal}
-              </Text>
+              </span>
             )}
           </div>
 

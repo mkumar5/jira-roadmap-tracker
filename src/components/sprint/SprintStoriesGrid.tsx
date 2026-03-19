@@ -65,9 +65,10 @@ const StatusCellRenderer = ({ value }: ICellRendererParams<Story>) => {
 interface SprintStoriesGridProps {
   stories: Story[];
   loading?: boolean;
+  fullHeight?: boolean;
 }
 
-export const SprintStoriesGrid = ({ stories, loading = false }: SprintStoriesGridProps) => {
+export const SprintStoriesGrid = ({ stories, loading = false, fullHeight = false }: SprintStoriesGridProps) => {
   const sortedStories = useMemo(
     () =>
       [...stories].sort((a, b) => {
@@ -163,7 +164,7 @@ export const SprintStoriesGrid = ({ stories, loading = false }: SprintStoriesGri
   return (
     <div
       className="ag-theme-quartz"
-      style={{ height: Math.min(400, 40 + sortedStories.length * 36 + 8), width: '100%' }}
+      style={{ height: fullHeight ? '100%' : Math.min(400, 40 + sortedStories.length * 36 + 8), width: '100%' }}
     >
       <AgGridReact<Story>
         rowData={sortedStories}

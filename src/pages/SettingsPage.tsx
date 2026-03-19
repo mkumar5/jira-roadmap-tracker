@@ -12,7 +12,6 @@ import {
   Text,
   StackLayout,
   Card,
-  SplitLayout,
   FlowLayout,
   Divider,
 } from '@salt-ds/core';
@@ -116,15 +115,15 @@ export const SettingsPage = () => {
   return (
     <div style={{ maxWidth: 640, margin: '0 auto' }}>
       <StackLayout gap={2} direction="column">
-        <SplitLayout
-          align="center"
-          startItem={<Text styleAs="h4" style={{ fontWeight: 700 }}>Settings</Text>}
-          endItem={
-            <Button variant="secondary" onClick={handleResetToEnv}>
-              Reset to .env defaults
-            </Button>
-          }
-        />
+        <div className="page-header">
+          <div>
+            <div className="page-title">Settings</div>
+            <div className="page-subtitle">Configure your Jira connection and alert preferences</div>
+          </div>
+          <Button variant="secondary" onClick={handleResetToEnv}>
+            Reset to .env defaults
+          </Button>
+        </div>
 
         {/* Current effective config summary */}
         <Banner status={store.projectKeys.length > 0 ? 'info' : 'warning'}>

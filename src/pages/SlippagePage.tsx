@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useRef, useDeferredValue } from 'react';
-import { Text, Input, Checkbox, CheckboxGroup, Button, SplitLayout, FlowLayout } from '@salt-ds/core';
+import { Text, Input, Checkbox, CheckboxGroup, Button, FlowLayout } from '@salt-ds/core';
 import { TabsNext, TabNext, TabListNext, TabNextTrigger, TabNextPanel } from '@salt-ds/lab';
 import type { GridApi } from 'ag-grid-community';
 import { SlippageGrid, AtRiskGrid } from '@/components/roadmap/SlippageGrid';
@@ -120,23 +120,23 @@ export const SlippagePage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--salt-spacing-150)' }}>
       {/* Page header */}
-      <SplitLayout
-        align="center"
-        startItem={<Text styleAs="h4" style={{ fontWeight: 700 }}>Slippage Alerts</Text>}
-        endItem={
-          <FlowLayout gap={1} align="center">
-            {lastChecked && (
-              <Text styleAs="label" color="secondary">Last checked {lastChecked}</Text>
-            )}
-            <Button variant="secondary" onClick={() => void refetchSlipped()} disabled={slippedLoading}>
-              Refresh
-            </Button>
-            <Button variant="secondary" onClick={handleExportCsv}>
-              Export CSV
-            </Button>
-          </FlowLayout>
-        }
-      />
+      <div className="page-header">
+        <div>
+          <div className="page-title">Slippage Alerts</div>
+          <div className="page-subtitle">Items past due or at risk of missing their deadline</div>
+        </div>
+        <FlowLayout gap={1} align="center">
+          {lastChecked && (
+            <Text styleAs="label" color="secondary">Last checked {lastChecked}</Text>
+          )}
+          <Button variant="secondary" onClick={() => void refetchSlipped()} disabled={slippedLoading}>
+            Refresh
+          </Button>
+          <Button variant="secondary" onClick={handleExportCsv}>
+            Export CSV
+          </Button>
+        </FlowLayout>
+      </div>
 
       {/* Summary banner */}
       <SlippageSummaryBanner

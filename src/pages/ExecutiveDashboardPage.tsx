@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Text, Button, Banner, BannerContent, StackLayout, GridLayout, GridItem, SplitLayout, FlowLayout, Card } from '@salt-ds/core';
+import { Text, Button, Banner, BannerContent, StackLayout, GridLayout, GridItem, FlowLayout, Card } from '@salt-ds/core';
 import { useExecutiveSummary } from '@/hooks/useExecutiveSummary';
 import { useConfigStore } from '@/store/configStore';
 import { KpiCard } from '@/components/shared/KpiCard';
@@ -11,24 +11,14 @@ import { formatRelativeTime } from '@/utils/date.utils';
 
 function SectionHeader({ title, badge }: { title: string; badge?: string | number }) {
   return (
-    <SplitLayout
-      style={{
-        padding: 'var(--salt-spacing-50) var(--salt-spacing-100)',
-        borderBottom: '1px solid var(--salt-separable-primary-borderColor)',
-        background: 'var(--salt-color-background-secondary)',
-      }}
-      align="center"
-      startItem={
-        <Text styleAs="label" style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 11, color: 'var(--salt-color-foreground-secondary)' }}>
-          {title}
-        </Text>
-      }
-      endItem={
-        badge !== undefined ? (
-          <Text styleAs="label" color="secondary" style={{ fontSize: 11 }}>{badge}</Text>
-        ) : undefined
-      }
-    />
+    <div className="card-section-header">
+      <span className="card-section-title">{title}</span>
+      {badge !== undefined && (
+        <span style={{ fontSize: 11, color: 'var(--salt-color-foreground-secondary)', fontWeight: 600 }}>
+          {badge}
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -61,22 +51,22 @@ export const ExecutiveDashboardPage = () => {
   const km = summary?.keyMetrics;
 
   return (
-    <StackLayout gap={2} direction="column">
+    <StackLayout gap={2.5} direction="column">
       {/* Page header */}
-      <SplitLayout
-        align="center"
-        startItem={<Text styleAs="h4" style={{ fontWeight: 700 }}>Executive Dashboard</Text>}
-        endItem={
-          <FlowLayout gap={1} align="center">
-            {lastUpdated && (
-              <Text styleAs="label" color="secondary">Updated {lastUpdated}</Text>
-            )}
-            <Button variant="secondary" onClick={() => void refetch()} disabled={isFetching}>
-              {isFetching ? 'Refreshing…' : 'Refresh'}
-            </Button>
-          </FlowLayout>
-        }
-      />
+      <div className="page-header">
+        <div>
+          <div className="page-title">Executive Dashboard</div>
+          <div className="page-subtitle">Program health across all active teams and initiatives</div>
+        </div>
+        <FlowLayout gap={1} align="center">
+          {lastUpdated && (
+            <Text styleAs="label" color="secondary">Updated {lastUpdated}</Text>
+          )}
+          <Button variant="secondary" onClick={() => void refetch()} disabled={isFetching}>
+            {isFetching ? 'Refreshing…' : 'Refresh'}
+          </Button>
+        </FlowLayout>
+      </div>
 
       {isError && (
         <Banner status="error">
@@ -114,7 +104,7 @@ export const ExecutiveDashboardPage = () => {
           {/* Row 2 — Status ring + Team health */}
           <GridLayout columns={3} gap={2}>
             <GridItem colSpan={1}>
-              <Card variant="primary" style={{ padding: 0 }}>
+              <Card variant="primary" className="card-elevated" style={{ padding: 0 }}>
                 <SectionHeader title="Program Status" />
                 <div style={{ padding: 'var(--salt-spacing-150)', display: 'flex', justifyContent: 'center' }}>
                   <StatusRing
@@ -129,7 +119,7 @@ export const ExecutiveDashboardPage = () => {
             </GridItem>
 
             <GridItem colSpan={2}>
-              <Card variant="primary" style={{ padding: 0 }}>
+              <Card variant="primary" className="card-elevated" style={{ padding: 0 }}>
                 <SectionHeader title="Team Health" badge={`${summary.teamSummaries.length} teams`} />
                 {summary.teamSummaries.length === 0 ? (
                   <div style={{ padding: 'var(--salt-spacing-300)', textAlign: 'center' }}>
@@ -144,12 +134,12 @@ export const ExecutiveDashboardPage = () => {
 
           {/* Row 3 — Top slipped + Upcoming deadlines */}
           <GridLayout columns={2} gap={2}>
-            <Card variant="primary" style={{ padding: 0 }}>
+            <Card variant="primary" className="card-elevated" style={{ padding: 0 }}>
               <SectionHeader title="Top Slipped Items" badge={summary.topSlippedItems.length} />
               <TopSlippedList items={summary.topSlippedItems} />
             </Card>
 
-            <Card variant="primary" style={{ padding: 0 }}>
+            <Card variant="primary" className="card-elevated" style={{ padding: 0 }}>
               <SectionHeader title="Upcoming Deadlines — 14 days" badge={summary.upcomingDeadlines.length} />
               <UpcomingDeadlines items={summary.upcomingDeadlines} />
             </Card>

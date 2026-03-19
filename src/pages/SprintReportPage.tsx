@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Text, Button, StackLayout, SplitLayout } from '@salt-ds/core';
+import { Text, Button, StackLayout } from '@salt-ds/core';
 import { TabsNext, TabNext, TabListNext, TabNextTrigger, TabNextPanel } from '@salt-ds/lab';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
@@ -183,22 +183,22 @@ export const SprintReportPage = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--salt-spacing-150)' }}>
-      <SplitLayout
-        align="center"
-        startItem={<Text styleAs="h4" style={{ fontWeight: 700 }}>Sprint Reports</Text>}
-        endItem={
-          <div style={{ display: 'flex', gap: 'var(--salt-spacing-100)', alignItems: 'center' }}>
-            <Button variant="cta" onClick={() => void refetch()} disabled={isFetching}>
-              {isFetching ? 'Generating…' : 'Generate Reports'}
+      <div className="page-header">
+        <div>
+          <div className="page-title">Sprint Reports</div>
+          <div className="page-subtitle">End-of-sprint summaries per team with health score and velocity trend</div>
+        </div>
+        <div style={{ display: 'flex', gap: 'var(--salt-spacing-100)', alignItems: 'center' }}>
+          <Button variant="cta" onClick={() => void refetch()} disabled={isFetching}>
+            {isFetching ? 'Generating…' : 'Generate Reports'}
+          </Button>
+          {reports.length > 0 && (
+            <Button variant="secondary" onClick={() => { reports.forEach((r) => { downloadMarkdown(exportReportToMarkdown(r), buildReportFilename(r)); }); }}>
+              Export All
             </Button>
-            {reports.length > 0 && (
-              <Button variant="secondary" onClick={() => { reports.forEach((r) => { downloadMarkdown(exportReportToMarkdown(r), buildReportFilename(r)); }); }}>
-                Export All
-              </Button>
-            )}
-          </div>
-        }
-      />
+          )}
+        </div>
+      </div>
 
       {isLoading && (
         <div style={{ padding: 'var(--salt-spacing-400)', textAlign: 'center' }}>

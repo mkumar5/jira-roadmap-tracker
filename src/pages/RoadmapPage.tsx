@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useDeferredValue } from 'react';
-import { Button, Text, Input, Checkbox, CheckboxGroup, SplitLayout, FlowLayout } from '@salt-ds/core';
+import { Button, Text, Input, Checkbox, CheckboxGroup } from '@salt-ds/core';
 import type { GridApi } from 'ag-grid-community';
 import { RoadmapGrid } from '@/components/roadmap/RoadmapGrid';
 import { useRoadmapHierarchy } from '@/hooks/useRoadmap';
@@ -81,23 +81,17 @@ export const RoadmapPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Page header */}
-      <SplitLayout
-        align="center"
-        style={{ marginBottom: 'var(--salt-spacing-75)' }}
-        startItem={<Text styleAs="h4" style={{ fontWeight: 700 }}>Roadmap</Text>}
-        endItem={
-          <FlowLayout gap={1} align="center">
-            {allNodes.length > 0 && (
-              <Text styleAs="label" color="secondary">
-                {allNodes.length.toLocaleString()} items · {projectKeys.join(', ')}
-              </Text>
-            )}
-            <Button variant="secondary" onClick={handleExportCsv} disabled={isLoading}>
-              Export CSV
-            </Button>
-          </FlowLayout>
-        }
-      />
+      <div className="page-header">
+        <div>
+          <div className="page-title">Roadmap</div>
+          {allNodes.length > 0 && (
+            <div className="page-subtitle">{allNodes.length.toLocaleString()} items · {projectKeys.join(', ')}</div>
+          )}
+        </div>
+        <Button variant="secondary" onClick={handleExportCsv} disabled={isLoading}>
+          Export CSV
+        </Button>
+      </div>
 
       {/* Toolbar */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--salt-spacing-100)', flexWrap: 'wrap', paddingBottom: 'var(--salt-spacing-75)', borderBottom: '1px solid var(--salt-separable-primary-borderColor)' }}>

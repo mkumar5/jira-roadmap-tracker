@@ -42,6 +42,9 @@ const SprintReportPage = lazy(() =>
 const SettingsPage = lazy(() =>
   import('./pages/SettingsPage').then((m) => ({ default: m.SettingsPage }))
 );
+const AiEfficiencyPage = lazy(() =>
+  import('./pages/AiEfficiencyPage').then((m) => ({ default: m.AiEfficiencyPage }))
+);
 
 const PageSpinner = () => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '400px' }}>
@@ -78,6 +81,10 @@ export default function App() {
           <Route
             path="settings"
             element={<Suspense fallback={<PageSpinner />}><SettingsPage /></Suspense>}
+          />
+          <Route
+            path="ai-efficiency"
+            element={<Suspense fallback={<PageSpinner />}><AiEfficiencyPage /></Suspense>}
           />
         </Route>
       </Routes>
